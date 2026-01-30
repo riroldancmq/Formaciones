@@ -187,6 +187,25 @@
             border-top: 1px solid #e9ecef;
         }
 
+        .export-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #138496;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -372,6 +391,7 @@
 
         <div class="actions">
             <button class="save-btn" onclick="guardarDatos()">💾 Guardar Cambios</button>
+            <button class="export-btn" onclick="exportarJSON()">📥 Exportar JSON</button>
             <button class="reset-btn" onclick="resetearDatos()">🔄 Resetear Datos</button>
         </div>
 
@@ -435,6 +455,21 @@
             if (datosGuardados) {
                 mantenimientoData = JSON.parse(datosGuardados);
             }
+        }
+
+        // Exportar datos a archivo JSON
+        function exportarJSON() {
+            const dataStr = JSON.stringify(mantenimientoData, null, 4);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'datos-trenes.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            mostrarNotificacion('📥 Archivo JSON descargado correctamente');
         }
 
         // Guardar datos en localStorage
