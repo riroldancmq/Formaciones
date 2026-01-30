@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Control de Mantenimiento - Trenes (Solo Lectura)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .badge-readonly {
+            display: inline-block;
+            background: #17a2b8;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 25px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-width: 150px;
+            flex: 1;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #6c757d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .stat-card.verde h3 {
+            color: #28a745;
+        }
+
+        .stat-card.amarillo h3 {
+            color: #ffc107;
+        }
+
+        .stat-card.rojo h3 {
+            color: #dc3545;
+        }
+
+        .table-container {
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            min-width: 80px;
+        }
+
+        .status-verde {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .status-amarillo {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .status-rojo {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .semaforo {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .semaforo-verde {
+            background: #28a745;
+        }
+
+        .semaforo-amarillo {
+            background: #ffc107;
+        }
+
+        .semaforo-rojo {
+            background: #dc3545;
+        }
+
+        .formacion-cell {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 3px solid #e9ecef;
+        }
+
+        .leyenda {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚂 Sistema de Control de Mantenimiento</h1>
+            <p>Gestión de Trenes</p>
+            <span class="badge-readonly">👁️ MODO SOLO LECTURA</span>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card verde">
+                <h3 id="count-verde">0</h3>
+                <p>✓ Al Día</p>
+            </div>
+            <div class="stat-card amarillo">
+                <h3 id="count-amarillo">0</h3>
+                <p>⚠ Precaución</p>
+            </div>
+            <div class="stat-card rojo">
+                <h3 id="count-rojo">0</h3>
+                <p>⚠ Crítico</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="count-total">0</h3>
+                <p>Total Formaciones</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="maintenance-table">
+                <thead>
+                    <tr>
+                        <th>Formación</th>
+                        <th>Anteúltima Intervención</th>
+                        <th>Última Intervención</th>
+                        <th>Días de Demora</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <button class="refresh-btn" onclick="cargarDatos()">🔄 Actualizar Datos</button>
+            <div class="leyenda">
+                <div class="leyenda-item">
+                    <span class="semaforo semaforo-verde"></span>
+                    <span><strong>Verde:</strong> 0-10 días (OK)</span>
+                </div>
+                <div class="leyenda-item">
+                    <span class="semaforo semaforo-amarillo"></span>
+                    <span><strong>Amarillo:</strong> 11-20 días (Precaución)</span>
+                </div>
+                <div class="leyenda-item">
+                    <span class="semaforo semaforo-rojo"></span>
+                    <span><strong>Rojo:</strong> 21+ días (Intervención Necesaria)</span>
+                </div>
+            </div>
+            <p style="color: #6c757d; margin-top: 10px;">
+                Actualizado: <span id="fecha-actual"></span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let mantenimientoData = [];
+
+        // Cargar datos desde el archivo JSON
+        async function cargarDatos() {
+            try {
+                const response = await fetch('datos-trenes.json');
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el archivo de datos');
+                }
+                mantenimientoData = await response.json();
+                
+                // Recalcular días para cada registro
+                mantenimientoData.forEach(item => {
+                    item.dias = calcularDias(item.ultima);
+                });
+                
+                renderTable();
+                updateFecha();
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                document.getElementById('table-body').innerHTML = 
+                    '<tr><td colspan="5" style="text-align:center; color:#dc3545; padding:30px;">⚠️ Error al cargar los datos. Asegúrate de que el archivo datos-trenes.json esté en la misma carpeta.</td></tr>';
+            }
+        }
+
+        // Convertir fecha DD/MM/YYYY a objeto Date
+        function parseDate(dateStr) {
+            if (!dateStr || dateStr.trim() === '') return null;
+            const parts = dateStr.split('/');
+            if (parts.length !== 3) return null;
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        // Calcular días desde la última intervención hasta hoy
+        function calcularDias(ultimaFecha) {
+            if (!ultimaFecha || ultimaFecha.trim() === '') return null;
+            
+            const fechaUltima = parseDate(ultimaFecha);
+            if (!fechaUltima) return null;
+            
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            fechaUltima.setHours(0, 0, 0, 0);
+            
+            const diferencia = hoy - fechaUltima;
+            const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+            
+            return dias >= 0 ? dias : 0;
+        }
+
+        function getEstado(dias) {
+            if (dias === null || dias === '') return { clase: '', texto: 'Sin datos', semaforo: '' };
+            if (dias <= 10) return { clase: 'verde', texto: 'OK', semaforo: 'verde' };
+            if (dias <= 20) return { clase: 'amarillo', texto: 'Precaución', semaforo: 'amarillo' };
+            return { clase: 'rojo', texto: 'CRÍTICO', semaforo: 'rojo' };
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            let countVerde = 0;
+            let countAmarillo = 0;
+            let countRojo = 0;
+
+            mantenimientoData.forEach(item => {
+                const estado = getEstado(item.dias);
+                const row = document.createElement('tr');
+
+                // Contar estados
+                if (estado.clase === 'verde') countVerde++;
+                else if (estado.clase === 'amarillo') countAmarillo++;
+                else if (estado.clase === 'rojo') countRojo++;
+
+                row.innerHTML = `
+                    <td class="formacion-cell">${item.formacion}</td>
+                    <td>${item.anteultima || '-'}</td>
+                    <td>${item.ultima || '-'}</td>
+                    <td><strong>${item.dias !== null ? item.dias : '-'}</strong></td>
+                    <td>
+                        ${estado.semaforo ? `<span class="semaforo semaforo-${estado.semaforo}"></span>` : ''}
+                        <span class="status-badge status-${estado.clase}">${estado.texto}</span>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            // Actualizar estadísticas
+            document.getElementById('count-verde').textContent = countVerde;
+            document.getElementById('count-amarillo').textContent = countAmarillo;
+            document.getElementById('count-rojo').textContent = countRojo;
+            document.getElementById('count-total').textContent = mantenimientoData.length;
+        }
+
+        function updateFecha() {
+            const ahora = new Date();
+            const opciones = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            document.getElementById('fecha-actual').textContent = 
+                ahora.toLocaleDateString('es-AR', opciones);
+        }
+
+        // Inicializar cargando los datos
+        cargarDatos();
+        
+        // Actualizar fecha cada minuto
+        setInterval(updateFecha, 60000);
+    </script>
+</body>
+</html>

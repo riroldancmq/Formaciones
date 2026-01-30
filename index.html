@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Control de Mantenimiento - Trenes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 25px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-width: 150px;
+            flex: 1;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #6c757d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .stat-card.verde h3 {
+            color: #28a745;
+        }
+
+        .stat-card.amarillo h3 {
+            color: #ffc107;
+        }
+
+        .stat-card.rojo h3 {
+            color: #dc3545;
+        }
+
+        .table-container {
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .date-input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.95em;
+            width: 130px;
+            transition: all 0.3s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .date-input:hover {
+            border-color: #764ba2;
+        }
+
+        .edit-icon {
+            cursor: pointer;
+            margin-left: 5px;
+            color: #667eea;
+            font-size: 0.9em;
+        }
+
+        .save-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .reset-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .actions {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            min-width: 80px;
+        }
+
+        .status-verde {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .status-amarillo {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .status-rojo {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .semaforo {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .semaforo-verde {
+            background: #28a745;
+        }
+
+        .semaforo-amarillo {
+            background: #ffc107;
+        }
+
+        .semaforo-rojo {
+            background: #dc3545;
+        }
+
+        .formacion-cell {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 3px solid #e9ecef;
+        }
+
+        .leyenda {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚂 Sistema de Control de Mantenimiento</h1>
+            <p>Gestión de Trenes</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card verde">
+                <h3 id="count-verde">0</h3>
+                <p>✓ Al Día</p>
+            </div>
+            <div class="stat-card amarillo">
+                <h3 id="count-amarillo">0</h3>
+                <p>⚠ Precaución</p>
+            </div>
+            <div class="stat-card rojo">
+                <h3 id="count-rojo">0</h3>
+                <p>⚠ Crítico</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="count-total">0</h3>
+                <p>Total Formaciones</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="maintenance-table">
+                <thead>
+                    <tr>
+                        <th>Formación</th>
+                        <th>Anteúltima Intervención</th>
+                        <th>Última Intervención</th>
+                        <th>Días de Demora</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="actions">
+            <button class="save-btn" onclick="guardarDatos()">💾 Guardar Cambios</button>
+            <button class="reset-btn" onclick="resetearDatos()">🔄 Resetear Datos</button>
+        </div>
+
+        <div class="footer">
+            <div class="leyenda">
+                <div class="leyenda-item">
+                    <span class="semaforo semaforo-verde"></span>
+                    <span><strong>Verde:</strong> 0-10 días (OK)</span>
+                </div>
+                <div class="leyenda-item">
+                    <span class="semaforo semaforo-amarillo"></span>
+                    <span><strong>Amarillo:</strong> 11-20 días (Precaución)</span>
+                </div>
+                <div class="leyenda-item">
+                    <span class="semaforo semaforo-rojo"></span>
+                    <span><strong>Rojo:</strong> 21+ días (Intervención Necesaria)</span>
+                </div>
+            </div>
+            <p style="color: #6c757d; margin-top: 10px;">
+                Actualizado: <span id="fecha-actual"></span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Datos de mantenimiento de trenes
+        let mantenimientoData = [
+            { formacion: 1, anteultima: '15/12/2025', ultima: '12/01/2026', dias: null },
+            { formacion: 2, anteultima: '', ultima: '', dias: null },
+            { formacion: 3, anteultima: '', ultima: '', dias: null },
+            { formacion: 4, anteultima: '26/12/2025', ultima: '07/01/2026', dias: null },
+            { formacion: 5, anteultima: '19/12/2025', ultima: '14/01/2026', dias: null },
+            { formacion: 6, anteultima: '15/01/2026', ultima: '26/01/2026', dias: null },
+            { formacion: 7, anteultima: '09/12/2025', ultima: '20/01/2026', dias: null },
+            { formacion: 8, anteultima: '21/11/2025', ultima: '01/12/2025', dias: null },
+            { formacion: 9, anteultima: '', ultima: '', dias: null },
+            { formacion: 10, anteultima: '18/12/2025', ultima: '05/01/2026', dias: null },
+            { formacion: 11, anteultima: '', ultima: '', dias: null },
+            { formacion: 12, anteultima: '29/12/2025', ultima: '13/01/2026', dias: null },
+            { formacion: 13, anteultima: '17/12/2025', ultima: '23/01/2026', dias: null },
+            { formacion: 14, anteultima: '06/11/2025', ultima: '10/12/2025', dias: null },
+            { formacion: 15, anteultima: '', ultima: '', dias: null },
+            { formacion: 16, anteultima: '22/12/2025', ultima: '22/01/2026', dias: null },
+            { formacion: 17, anteultima: '12/12/2025', ultima: '08/01/2026', dias: null },
+            { formacion: 18, anteultima: '27/11/2025', ultima: '30/12/2025', dias: null },
+            { formacion: 19, anteultima: '09/01/2026', ultima: '19/01/2026', dias: null },
+            { formacion: 20, anteultima: '30/09/2025', ultima: '21/10/2025', dias: null },
+            { formacion: 21, anteultima: '05/12/2025', ultima: '02/01/2026', dias: null },
+            { formacion: 22, anteultima: '04/12/2025', ultima: '16/01/2026', dias: null },
+            { formacion: 23, anteultima: '06/01/2026', ultima: '21/01/2026', dias: null }
+        ];
+
+        // Calcular días iniciales para todos los registros
+        mantenimientoData.forEach(item => {
+            item.dias = calcularDias(item.ultima);
+        });
+
+        // Cargar datos guardados del localStorage
+        function cargarDatosGuardados() {
+            const datosGuardados = localStorage.getItem('mantenimientoTrenes');
+            if (datosGuardados) {
+                mantenimientoData = JSON.parse(datosGuardados);
+            }
+        }
+
+        // Guardar datos en localStorage
+        function guardarDatos() {
+            localStorage.setItem('mantenimientoTrenes', JSON.stringify(mantenimientoData));
+            mostrarNotificacion('✅ Datos guardados correctamente');
+        }
+
+        // Resetear y borrar todos los datos
+        function resetearDatos() {
+            if (confirm('¿Estás seguro de que quieres borrar TODOS los datos?')) {
+                // Vaciar todos los campos de todas las formaciones
+                mantenimientoData = mantenimientoData.map(item => ({
+                    formacion: item.formacion,
+                    anteultima: '',
+                    ultima: '',
+                    dias: null
+                }));
+                
+                localStorage.setItem('mantenimientoTrenes', JSON.stringify(mantenimientoData));
+                renderTable();
+                mostrarNotificacion('🗑️ Todos los datos han sido borrados');
+            }
+        }
+
+        // Mostrar notificación
+        function mostrarNotificacion(mensaje) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.textContent = mensaje;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => notif.remove(), 300);
+            }, 2000);
+        }
+
+        // Convertir fecha DD/MM/YYYY a objeto Date
+        function parseDate(dateStr) {
+            if (!dateStr || dateStr.trim() === '') return null;
+            const parts = dateStr.split('/');
+            if (parts.length !== 3) return null;
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        // Convertir Date a DD/MM/YYYY
+        function formatDate(date) {
+            if (!date) return '';
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Calcular días desde la última intervención hasta hoy
+        function calcularDias(ultimaFecha) {
+            if (!ultimaFecha || ultimaFecha.trim() === '') return null;
+            
+            const fechaUltima = parseDate(ultimaFecha);
+            if (!fechaUltima) return null;
+            
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            fechaUltima.setHours(0, 0, 0, 0);
+            
+            const diferencia = hoy - fechaUltima;
+            const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+            
+            return dias >= 0 ? dias : 0;
+        }
+
+        // Actualizar datos cuando se cambia una fecha
+        function actualizarFecha(formacion, campo, valor) {
+            const item = mantenimientoData.find(d => d.formacion === formacion);
+            if (!item) return;
+
+            item[campo] = valor;
+
+            // Recalcular días basado en la última intervención
+            item.dias = calcularDias(item.ultima);
+
+            renderTable();
+        }
+
+        function getEstado(dias) {
+            if (dias === null || dias === '') return { clase: '', texto: 'Sin datos', semaforo: '' };
+            if (dias <= 10) return { clase: 'verde', texto: 'OK', semaforo: 'verde' };
+            if (dias <= 20) return { clase: 'amarillo', texto: 'Precaución', semaforo: 'amarillo' };
+            return { clase: 'rojo', texto: 'CRÍTICO', semaforo: 'rojo' };
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            let countVerde = 0;
+            let countAmarillo = 0;
+            let countRojo = 0;
+
+            mantenimientoData.forEach(item => {
+                const estado = getEstado(item.dias);
+                const row = document.createElement('tr');
+
+                // Contar estados
+                if (estado.clase === 'verde') countVerde++;
+                else if (estado.clase === 'amarillo') countAmarillo++;
+                else if (estado.clase === 'rojo') countRojo++;
+
+                row.innerHTML = `
+                    <td class="formacion-cell">${item.formacion}</td>
+                    <td>
+                        <input 
+                            type="text" 
+                            class="date-input" 
+                            value="${item.anteultima || ''}" 
+                            placeholder="DD/MM/YYYY"
+                            onchange="actualizarFecha(${item.formacion}, 'anteultima', this.value)"
+                        />
+                    </td>
+                    <td>
+                        <input 
+                            type="text" 
+                            class="date-input" 
+                            value="${item.ultima || ''}" 
+                            placeholder="DD/MM/YYYY"
+                            onchange="actualizarFecha(${item.formacion}, 'ultima', this.value)"
+                        />
+                    </td>
+                    <td><strong>${item.dias !== null ? item.dias : '-'}</strong></td>
+                    <td>
+                        ${estado.semaforo ? `<span class="semaforo semaforo-${estado.semaforo}"></span>` : ''}
+                        <span class="status-badge status-${estado.clase}">${estado.texto}</span>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            // Actualizar estadísticas
+            document.getElementById('count-verde').textContent = countVerde;
+            document.getElementById('count-amarillo').textContent = countAmarillo;
+            document.getElementById('count-rojo').textContent = countRojo;
+            document.getElementById('count-total').textContent = mantenimientoData.length;
+        }
+
+        function updateFecha() {
+            const ahora = new Date();
+            const opciones = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            document.getElementById('fecha-actual').textContent = 
+                ahora.toLocaleDateString('es-AR', opciones);
+        }
+
+        // Inicializar
+        cargarDatosGuardados();
+        renderTable();
+        updateFecha();
+
+        // Actualizar fecha cada minuto
+        setInterval(updateFecha, 60000);
+    </script>
+</body>
+</html>
