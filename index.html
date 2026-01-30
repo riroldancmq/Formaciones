@@ -18,6 +18,99 @@
             min-height: 100vh;
         }
 
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-box h2 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .login-box p {
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .login-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .skip-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .skip-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -25,6 +118,11 @@
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
+            display: none;
+        }
+
+        .container.visible {
+            display: block;
         }
 
         .header {
@@ -32,6 +130,7 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
@@ -42,6 +141,43 @@
         .header p {
             opacity: 0.9;
             font-size: 1.1em;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .mode-badge.editable {
+            background: #28a745;
+            color: white;
+        }
+
+        .mode-badge.readonly {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         .stats {
@@ -117,6 +253,16 @@
             border-bottom: 1px solid #e9ecef;
         }
 
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
         .date-input {
             padding: 8px 12px;
             border: 2px solid #e9ecef;
@@ -136,108 +282,9 @@
             border-color: #764ba2;
         }
 
-        .edit-icon {
-            cursor: pointer;
-            margin-left: 5px;
-            color: #667eea;
-            font-size: 0.9em;
-        }
-
-        .save-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .save-btn:hover {
-            background: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .reset-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 10px;
-            margin-left: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .reset-btn:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .actions {
-            text-align: center;
-            padding: 20px;
+        .date-input:disabled {
             background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .export-btn {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 10px;
-            margin-left: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .export-btn:hover {
-            background: #138496;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        tbody tr {
-            transition: all 0.3s ease;
-        }
-
-        tbody tr:hover {
-            background: #f8f9fa;
-            transform: scale(1.01);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: not-allowed;
         }
 
         .status-badge {
@@ -306,6 +353,41 @@
             color: #2c3e50;
         }
 
+        .actions {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .save-btn, .reset-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn {
+            background: #dc3545;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
         .footer {
             background: #f8f9fa;
             padding: 20px;
@@ -331,6 +413,30 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.5em;
@@ -344,14 +450,40 @@
             .stats {
                 flex-direction: column;
             }
+
+            .logout-btn {
+                position: static;
+                margin-top: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Pantalla de login -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h2>🚂 Sistema de Mantenimiento</h2>
+            <p>Ingresa la contraseña para editar o continúa como visitante</p>
+            <div class="error-message" id="errorMessage"></div>
+            <input 
+                type="password" 
+                class="login-input" 
+                id="passwordInput" 
+                placeholder="Contraseña"
+                onkeypress="if(event.key==='Enter') iniciarSesion()"
+            />
+            <button class="login-btn" onclick="iniciarSesion()">🔓 Modo Edición</button>
+            <button class="skip-btn" onclick="entrarSoloLectura()">👁️ Ver como Visitante</button>
+        </div>
+    </div>
+
+    <!-- Aplicación principal -->
+    <div class="container" id="mainContainer">
         <div class="header">
+            <button class="logout-btn" onclick="cerrarSesion()" id="logoutBtn">🚪 Salir</button>
             <h1>🚂 Sistema de Control de Mantenimiento</h1>
             <p>Gestión de Trenes</p>
+            <span class="mode-badge" id="modeBadge"></span>
         </div>
 
         <div class="stats">
@@ -389,9 +521,8 @@
             </table>
         </div>
 
-        <div class="actions">
+        <div class="actions" id="actionsSection" style="display: none;">
             <button class="save-btn" onclick="guardarDatos()">💾 Guardar Cambios</button>
-            <button class="export-btn" onclick="exportarJSON()">📥 Exportar JSON</button>
             <button class="reset-btn" onclick="resetearDatos()">🔄 Resetear Datos</button>
         </div>
 
@@ -417,37 +548,86 @@
     </div>
 
     <script>
+        // Contraseña para modo edición (CAMBIAR ESTA CONTRASEÑA)
+        const PASSWORD = "admin123";
+        
+        let isEditMode = false;
+
         // Datos de mantenimiento de trenes
         let mantenimientoData = [
-            { formacion: 1, anteultima: '15/12/2025', ultima: '12/01/2026', dias: null },
-            { formacion: 2, anteultima: '', ultima: '', dias: null },
-            { formacion: 3, anteultima: '', ultima: '', dias: null },
-            { formacion: 4, anteultima: '26/12/2025', ultima: '07/01/2026', dias: null },
-            { formacion: 5, anteultima: '19/12/2025', ultima: '14/01/2026', dias: null },
-            { formacion: 6, anteultima: '15/01/2026', ultima: '26/01/2026', dias: null },
-            { formacion: 7, anteultima: '09/12/2025', ultima: '20/01/2026', dias: null },
-            { formacion: 8, anteultima: '21/11/2025', ultima: '01/12/2025', dias: null },
-            { formacion: 9, anteultima: '', ultima: '', dias: null },
-            { formacion: 10, anteultima: '18/12/2025', ultima: '05/01/2026', dias: null },
-            { formacion: 11, anteultima: '', ultima: '', dias: null },
-            { formacion: 12, anteultima: '29/12/2025', ultima: '13/01/2026', dias: null },
-            { formacion: 13, anteultima: '17/12/2025', ultima: '23/01/2026', dias: null },
-            { formacion: 14, anteultima: '06/11/2025', ultima: '10/12/2025', dias: null },
-            { formacion: 15, anteultima: '', ultima: '', dias: null },
-            { formacion: 16, anteultima: '22/12/2025', ultima: '22/01/2026', dias: null },
-            { formacion: 17, anteultima: '12/12/2025', ultima: '08/01/2026', dias: null },
-            { formacion: 18, anteultima: '27/11/2025', ultima: '30/12/2025', dias: null },
-            { formacion: 19, anteultima: '09/01/2026', ultima: '19/01/2026', dias: null },
-            { formacion: 20, anteultima: '30/09/2025', ultima: '21/10/2025', dias: null },
-            { formacion: 21, anteultima: '05/12/2025', ultima: '02/01/2026', dias: null },
-            { formacion: 22, anteultima: '04/12/2025', ultima: '16/01/2026', dias: null },
-            { formacion: 23, anteultima: '06/01/2026', ultima: '21/01/2026', dias: null }
+            { formacion: 1, anteultima: "15/12/2025", ultima: "12/01/2026", dias: null },
+            { formacion: 2, anteultima: "", ultima: "", dias: null },
+            { formacion: 3, anteultima: "", ultima: "", dias: null },
+            { formacion: 4, anteultima: "26/12/2025", ultima: "07/01/2026", dias: null },
+            { formacion: 5, anteultima: "19/12/2025", ultima: "14/01/2026", dias: null },
+            { formacion: 6, anteultima: "15/01/2026", ultima: "26/01/2026", dias: null },
+            { formacion: 7, anteultima: "09/12/2025", ultima: "20/01/2026", dias: null },
+            { formacion: 8, anteultima: "21/11/2025", ultima: "01/12/2025", dias: null },
+            { formacion: 9, anteultima: "", ultima: "", dias: null },
+            { formacion: 10, anteultima: "18/12/2025", ultima: "05/01/2026", dias: null },
+            { formacion: 11, anteultima: "", ultima: "", dias: null },
+            { formacion: 12, anteultima: "29/12/2025", ultima: "13/01/2026", dias: null },
+            { formacion: 13, anteultima: "17/12/2025", ultima: "23/01/2026", dias: null },
+            { formacion: 14, anteultima: "06/11/2025", ultima: "10/12/2025", dias: null },
+            { formacion: 15, anteultima: "", ultima: "", dias: null },
+            { formacion: 16, anteultima: "22/12/2025", ultima: "22/01/2026", dias: null },
+            { formacion: 17, anteultima: "12/12/2025", ultima: "08/01/2026", dias: null },
+            { formacion: 18, anteultima: "27/11/2025", ultima: "30/12/2025", dias: null },
+            { formacion: 19, anteultima: "09/01/2026", ultima: "19/01/2026", dias: null },
+            { formacion: 20, anteultima: "30/09/2025", ultima: "21/10/2025", dias: null },
+            { formacion: 21, anteultima: "05/12/2025", ultima: "02/01/2026", dias: null },
+            { formacion: 22, anteultima: "04/12/2025", ultima: "16/01/2026", dias: null },
+            { formacion: 23, anteultima: "06/01/2026", ultima: "21/01/2026", dias: null }
         ];
 
-        // Calcular días iniciales para todos los registros
-        mantenimientoData.forEach(item => {
-            item.dias = calcularDias(item.ultima);
-        });
+        // Iniciar sesión con contraseña
+        function iniciarSesion() {
+            const input = document.getElementById('passwordInput');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (input.value === PASSWORD) {
+                isEditMode = true;
+                errorMsg.textContent = '';
+                mostrarAplicacion();
+            } else {
+                errorMsg.textContent = '❌ Contraseña incorrecta';
+                input.value = '';
+            }
+        }
+
+        // Entrar en modo solo lectura
+        function entrarSoloLectura() {
+            isEditMode = false;
+            mostrarAplicacion();
+        }
+
+        // Mostrar la aplicación
+        function mostrarAplicacion() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('mainContainer').classList.add('visible');
+            
+            const badge = document.getElementById('modeBadge');
+            const actionsSection = document.getElementById('actionsSection');
+            
+            if (isEditMode) {
+                badge.textContent = '✏️ MODO EDICIÓN';
+                badge.className = 'mode-badge editable';
+                actionsSection.style.display = 'block';
+            } else {
+                badge.textContent = '👁️ MODO SOLO LECTURA';
+                badge.className = 'mode-badge readonly';
+                actionsSection.style.display = 'none';
+            }
+            
+            cargarDatosGuardados();
+            renderTable();
+            updateFecha();
+        }
+
+        // Cerrar sesión
+        function cerrarSesion() {
+            location.reload();
+        }
 
         // Cargar datos guardados del localStorage
         function cargarDatosGuardados() {
@@ -455,21 +635,10 @@
             if (datosGuardados) {
                 mantenimientoData = JSON.parse(datosGuardados);
             }
-        }
-
-        // Exportar datos a archivo JSON
-        function exportarJSON() {
-            const dataStr = JSON.stringify(mantenimientoData, null, 4);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'datos-trenes.json';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            mostrarNotificacion('📥 Archivo JSON descargado correctamente');
+            // Recalcular días
+            mantenimientoData.forEach(item => {
+                item.dias = calcularDias(item.ultima);
+            });
         }
 
         // Guardar datos en localStorage
@@ -481,7 +650,6 @@
         // Resetear y borrar todos los datos
         function resetearDatos() {
             if (confirm('¿Estás seguro de que quieres borrar TODOS los datos?')) {
-                // Vaciar todos los campos de todas las formaciones
                 mantenimientoData = mantenimientoData.map(item => ({
                     formacion: item.formacion,
                     anteultima: '',
@@ -516,15 +684,6 @@
             return new Date(parts[2], parts[1] - 1, parts[0]);
         }
 
-        // Convertir Date a DD/MM/YYYY
-        function formatDate(date) {
-            if (!date) return '';
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
-
         // Calcular días desde la última intervención hasta hoy
         function calcularDias(ultimaFecha) {
             if (!ultimaFecha || ultimaFecha.trim() === '') return null;
@@ -548,8 +707,6 @@
             if (!item) return;
 
             item[campo] = valor;
-
-            // Recalcular días basado en la última intervención
             item.dias = calcularDias(item.ultima);
 
             renderTable();
@@ -579,6 +736,9 @@
                 else if (estado.clase === 'amarillo') countAmarillo++;
                 else if (estado.clase === 'rojo') countRojo++;
 
+                const disabled = isEditMode ? '' : 'disabled';
+                const onchange = isEditMode ? `onchange="actualizarFecha(${item.formacion}, '{campo}', this.value)"` : '';
+
                 row.innerHTML = `
                     <td class="formacion-cell">${item.formacion}</td>
                     <td>
@@ -587,7 +747,8 @@
                             class="date-input" 
                             value="${item.anteultima || ''}" 
                             placeholder="DD/MM/YYYY"
-                            onchange="actualizarFecha(${item.formacion}, 'anteultima', this.value)"
+                            ${disabled}
+                            ${onchange.replace('{campo}', 'anteultima')}
                         />
                     </td>
                     <td>
@@ -596,7 +757,8 @@
                             class="date-input" 
                             value="${item.ultima || ''}" 
                             placeholder="DD/MM/YYYY"
-                            onchange="actualizarFecha(${item.formacion}, 'ultima', this.value)"
+                            ${disabled}
+                            ${onchange.replace('{campo}', 'ultima')}
                         />
                     </td>
                     <td><strong>${item.dias !== null ? item.dias : '-'}</strong></td>
@@ -628,11 +790,6 @@
             document.getElementById('fecha-actual').textContent = 
                 ahora.toLocaleDateString('es-AR', opciones);
         }
-
-        // Inicializar
-        cargarDatosGuardados();
-        renderTable();
-        updateFecha();
 
         // Actualizar fecha cada minuto
         setInterval(updateFecha, 60000);
